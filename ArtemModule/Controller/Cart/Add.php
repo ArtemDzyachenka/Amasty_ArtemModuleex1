@@ -146,14 +146,4 @@ class Add extends Action
 
 
 
-//    public function getTypes()
-//    {
-//        if ($this->_types === null) {
-//            $productTypes = $this->_config->getAll();
-//            foreach ($productTypes as $productTypeKey => $productTypeConfig) {
-//                $productTypes[$productTypeKey]['label'] = __($productTypeConfig['label']);
-//            }
-//            $this->_types = $productTypes;
-//        }
-//        return $this->_types;
-//    }
+

@@ -6,14 +6,13 @@
 <div>
     <form action="http://localhost/magento2/checkoutpage/cart/add" method="post">
         <p><input type="text" name="sku"> <br>
-            <?php if ($block->getQtyStatus()): ?>
+            <?php if ($block->getQtyStatus() == 1): ?>
             <input type="number" name="qty" value="<?=$block->getQtyNumber()?>"> <br>
             <?php endif; ?>
         <p><input type="submit"></p>
     </form>
 </div>
 
-<?php var_dump($block->getQtyStatus()); ?>
-<?php var_dump($block->getQtyNumber()); ?>
+
 
 

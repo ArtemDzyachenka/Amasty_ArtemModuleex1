@@ -5,5 +5,8 @@
         <route id="localpageid" frontName="localpage">
             <module name="Amasty_ArtemModule" />
         </route>
+        <route id="secondpageid" frontName="checkoutpage">
+            <module name="Amasty_ArtemModule" />
+        </route>
     </router>
 </config>
