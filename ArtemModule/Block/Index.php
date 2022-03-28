@@ -8,6 +8,8 @@ use Magento\Framework\view\Element\Template;
 
 class Index extends Template
 {
+
+
     /**
      * @var ScopeConfigInterface
      */
@@ -34,11 +36,15 @@ class Index extends Template
     }
     public function getQtyStatus()
     {
-        return $this->scopeConfig->getValue('first_config/more/qty_enabled',ScopeConfigInterface::SCOPE_TYPE_DEFAULT, true) ?: ' ';
+        return $this->scopeConfig->getValue('first_config/more/qty_enabled',ScopeConfigInterface::SCOPE_TYPE_DEFAULT) ?: ' ';
     }
     public function getQtyNumber()
     {
-        return $this->scopeConfig->getValue('first_config/more/qty_number',ScopeConfigInterface::SCOPE_TYPE_DEFAULT, true) ?: ' ';
+        return $this->scopeConfig->getValue('first_config/more/qty_number',ScopeConfigInterface::SCOPE_TYPE_DEFAULT) ?: ' ';
 
+    }
+    public function getFormAction()
+    {
+        return self::FORM_ACTION;
     }
 }

@@ -3,4 +3,56 @@
 </div>
 
 
+<script>
+    // require(['jquery'], function ($)){
+    //     $('.page-footer').hide()
+    // }
+</script>
 
+
+<!--<script type="text/x-magento-init">-->
+<!--    {-->
+<!--        ".img":{-->
+<!--            "Amasty_ArtemModule/js/hider":{-->
+<!--            "selector":".page-footer"-->
+<!--            }-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
+
+<!--<div class="search-widget">-->
+<!--    <label for="test-search-input">Search:</label>-->
+<!--    <input type="text" name="test-serch" id="test-search-input">-->
+<!--    <ul class="search-result-list"></ul>-->
+<!--</div>-->
+
+
+<!--<script type="text/x-magento-init">-->
+<!--    {-->
+<!--        ".search-widget": {-->
+<!--            "Amasty_ArtemModule/js/widgetAutoComplete": {-->
+<!--                "minChars": 3-->
+<!--            }-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
+
+<div data-bind="scope: 'sAutocomplete'">
+<!-- ko template : getTemplate() -->
+    <!--/ko-->
+</div>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": {
+                "components": {
+                    "sAutocomplete": {
+                        "component": "Amasty_ArtemModule/js/searchAutocomplete",
+                        "template": "Amasty_ArtemModule/searchAutocomplete"
+                    }
+                }
+            }
+        }
+    }
+</script>
