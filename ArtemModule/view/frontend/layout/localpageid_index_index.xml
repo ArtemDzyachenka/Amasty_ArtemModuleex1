@@ -19,7 +19,8 @@
                     <block name="amasty_artem.additional" template="Amasty_ArtemModule::additional.phtml">
                     </block>
                 </block>
-
+                <block name="amasty_artem.additional" template="Amasty_ArtemModule::additional.phtml">
+                </block>
             </container>
         </referenceContainer>
 

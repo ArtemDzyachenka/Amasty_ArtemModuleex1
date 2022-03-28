@@ -1,0 +1,8 @@
+<div>
+    <label for="search-input">Search:</label>
+    <input type="text" name="search" id="search-input" data-bind="textInput: searchText"/>
+    <ul class="result" data-bind="foreach: searchText">
+        <li class="result" data-bind="text: $data"></li>
+    </ul>
+</div>
+
