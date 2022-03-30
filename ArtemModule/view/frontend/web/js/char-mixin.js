@@ -1,25 +1,3 @@
-
-// Первая попытка сделать миксин
-
-define(['uiComponent', 'uiRegistry'], function () {
-        'use strict';
-
-        var mixin = {
-            initialize: function() {
-                this._super();
-                this.minChars = 5 },
-        };
-
-        return function (target) {
-            return target.extend(mixin);
-        };
-
-    }
-);
-
-// Далее идут попытки сделать миксин :
-
-
 // define([], function () {
 //         'use strict';
 //         var mixin = {
@@ -101,16 +79,16 @@ define(['uiComponent', 'uiRegistry'], function () {
 // });
 
 
-// define(["jquery",'uiComponent'],
-//     function ($,Component) {
-//         'use strict';
-//         var mixins = {
-//             handleAutocomplete: function () {
-//                 this._super();
-//                 return this.minChars = 5;
-//             },
-//         }
-//         return function (target) {
-//             return target.extend(mixins);
-//         }
-//     });
+define(["jquery",'uiComponent'],
+    function ($,Component) {
+        'use strict';
+        var mixins = {
+            handleAutocomplete: function () {
+                this._super();
+                return this.minChars = 5;
+            },
+            }
+            return function (target) {
+                return target.extend(mixins);
+        }
+    });

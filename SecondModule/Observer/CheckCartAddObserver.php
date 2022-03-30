@@ -4,11 +4,14 @@ namespace Amasty\SecondModule\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+
 use Magento\Catalog\Api\ProductRepositoryInterface;
+
 
 
 class CheckCartAddObserver implements  ObserverInterface
 {
+
 
     public function __construct(
         \Magento\Catalog\Api\ProductRepositoryInterface                $productRepository,
@@ -44,6 +47,14 @@ class CheckCartAddObserver implements  ObserverInterface
         if ($whichSku == $forSku  ) {
             $quote->addProduct($product, 1);
             $quote->save();
+
+    public function execute(Observer $observer)
+    {
+        $cart = $observer->getData('cart_to_check');
+
+        if ($cart ==   ) {
+
+
         }
     }
 

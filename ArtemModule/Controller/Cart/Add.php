@@ -114,9 +114,15 @@ class Add extends Action
                 if ($type != 'simple') {
                     $this->messageManager->addErrorMessage('Это не simple предмет.');
                 }
+
 //                if ($product != $sku) {
 //                    $this->messageManager->addErrorMessage(('Такого предмета не существует.'));
 //                }
+
+                if ($product != $sku) {
+                    $this->messageManager->addErrorMessage(('Такого предмета не существует.'));
+                }
+
             }
         }
     }

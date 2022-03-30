@@ -46,7 +46,12 @@ class Index extends Template
     }
     public function getFormAction()
     {
+
         return $this-> getUrl(self::FORM_ACTION);
+    }
+
+
+        return self::FORM_ACTION;
     }
 
 }
