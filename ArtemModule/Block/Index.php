@@ -14,6 +14,7 @@ class Index extends Template
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
+    const FORM_ACTION = 'checkoutpage/cart/add';
 
     public function __construct(
         Template\Context $context,
@@ -45,6 +46,12 @@ class Index extends Template
     }
     public function getFormAction()
     {
+
+        return $this-> getUrl(self::FORM_ACTION);
+    }
+
+
         return self::FORM_ACTION;
     }
+
 }

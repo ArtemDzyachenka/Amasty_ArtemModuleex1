@@ -1,3 +1,6 @@
+
+// Первая попытка сделать миксин
+
 define(['uiComponent', 'uiRegistry'], function () {
         'use strict';
 
@@ -13,6 +16,10 @@ define(['uiComponent', 'uiRegistry'], function () {
 
     }
 );
+
+// Далее идут попытки сделать миксин :
+
+
 // define([], function () {
 //         'use strict';
 //         var mixin = {
