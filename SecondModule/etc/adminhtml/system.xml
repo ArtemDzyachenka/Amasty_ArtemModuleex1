@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="Amasty_SecondModule" translate="label" sortOrder="10">
+            <label>Amasty Second Module</label>
+        </tab>
+        <section id="second_config" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Artem Module Config</label>
+            <tab>Amasty_SecondModule</tab>
+            <resource>Amasty_SecondModule::config</resource>
+            <group id="all_sku" translate="label" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Promo</label>
+                <field id="promo_sku" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Promo SKU</label>
+                    <validate>require-entry</validate>
+                </field>
+                <field id="standart_sku" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>For SKU</label>
+                    <validate>require-entry</validate>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

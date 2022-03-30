@@ -7,6 +7,7 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\Event\ManagerInterface as Manager;
 
 
 class Add extends Action
@@ -42,7 +43,13 @@ class Add extends Action
     /**
      * @var \Magento\Framework\Message\ManagerInterface
      */
+
+    /**
+     * @var ManagerInterface
+     */
     protected $messageManager;
+
+    private $eventManager;
 
     public function __construct(
         Context                                                        $context,
@@ -50,7 +57,8 @@ class Add extends Action
         \Magento\Checkout\Model\Session                                $checkoutSession,
         \Magento\Catalog\Api\ProductRepositoryInterface                $productRepository,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $collectionFactory,
-        \Magento\Framework\Message\ManagerInterface                    $messageManager
+        \Magento\Framework\Message\ManagerInterface                    $messageManager,
+        Manager $eventManager
     )
     {
         parent::__construct($context);
@@ -59,6 +67,7 @@ class Add extends Action
         $this->productRepository = $productRepository;
         $this->collectionFactory = $collectionFactory;
         $this->messageManager = $messageManager;
+        $this->eventManager = $eventManager;
     }
 
     public function execute()
@@ -68,11 +77,11 @@ class Add extends Action
 
         $collection = $this->collectionFactory->create();
         $collection->addAttributeToFilter('sku', ['like' => '%']);
-        $t = $collection->addAttributeToFilter('type_id', ['like' => 'Simple Product']);
+        $collection->addAttributeToFilter('type_id', ['like' => 'Simple Product']);
         $collection->addAttributeToSelect('sku');
 
-        $params = $this->getRequest()->getParams();
 
+        $params = $this->getRequest()->getParams();
         print_r($params);
 
         $quote = $this->checkoutSession->getQuote();
@@ -93,19 +102,21 @@ class Add extends Action
                 if ($type == 'simple') {
                     $quote->addProduct($product, $params['qty']);
                     $quote->save();
+                    $this->eventManager->dispatch(
+                        'cart_event',
+                        ['cart_to_check' => $product]
+                    );
                     echo('успех');
                 }
                 if ($qty < 1) {
                     $this->messageManager->addErrorMessage(__('Надо добавить хотя бы один предмет.'));
-                    echo('rpkg');
                 }
                 if ($type != 'simple') {
                     $this->messageManager->addErrorMessage('Это не simple предмет.');
                 }
-                if ($product != $sku) {
-                    $this->messageManager->addErrorMessage(('Такого предмета не существует.'));
-                    die('efg');
-                }
+//                if ($product != $sku) {
+//                    $this->messageManager->addErrorMessage(('Такого предмета не существует.'));
+//                }
             }
         }
     }

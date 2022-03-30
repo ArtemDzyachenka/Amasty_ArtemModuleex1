@@ -34,8 +34,12 @@ class Index extends Action
         $this->collectionFactory = $collectionFactory;
 
     }
+
+
     public function execute()
     {
+
+
         if ($this->scopeConfig->isSetFlag('first_config/general/enabled'))
         {
             return $this->resultFactory->create(ResultFactory::TYPE_PAGE);

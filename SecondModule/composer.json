@@ -1,5 +1,5 @@
 {
-    "name": "amasty/artem-module",
+    "name": "amasty/second-module",
     "description": "Test module for Magento Learning",
     "type": "magento2-module",
     "version": "1.0.0",
