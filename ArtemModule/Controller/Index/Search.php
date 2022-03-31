@@ -43,8 +43,7 @@ class Search extends Action
                 'name' => $product->getName()
             ];
         }
-//        var_dump($collection->getSelectSql(true));
-//        die();
+
         return $resultJson->setData($result);
     }
 }

@@ -10,12 +10,10 @@
                 <block name="amasty_artem.hello"
                        class="Amasty\ArtemModule\Block\Index"
                        template="Amasty_ArtemModule::index.phtml">
-
                 </block>
                 <block name="amasty_artem.form"
                        class="Amasty\ArtemModule\Block\Index"
                        template="Amasty_ArtemModule::form.phtml" >
-
                     <block name="amasty_artem.additional" template="Amasty_ArtemModule::additional.phtml">
                     </block>
                 </block>
@@ -23,7 +21,5 @@
                 </block>
             </container>
         </referenceContainer>
-
     </body>
-
 </page>
