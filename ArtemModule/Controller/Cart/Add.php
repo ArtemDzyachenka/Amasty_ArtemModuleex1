@@ -77,7 +77,7 @@ class Add extends Action
 
         $collection = $this->collectionFactory->create();
         $collection->addAttributeToFilter('sku', ['like' => '%']);
-        $t = $collection->addAttributeToFilter('type_id', ['like' => 'Simple Product']);
+        $collection->addAttributeToFilter('type_id', ['like' => 'Simple Product']);
         $collection->addAttributeToSelect('sku');
 
 

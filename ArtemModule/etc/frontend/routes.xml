@@ -8,6 +8,5 @@
         <route id="secondpageid" frontName="checkoutpage">
             <module name="Amasty_ArtemModule" />
         </route>
-
     </router>
 </config>

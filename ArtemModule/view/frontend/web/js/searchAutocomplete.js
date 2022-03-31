@@ -4,7 +4,7 @@ define(['uiComponent','jquery','mage/url'], function (Component,$,urlBuilder){
         defaults: {
             searchText: '',
             searchResult: [],
-            searchUrl: urlBuilder.build('localpage/index/search')
+            searchUrl: urlBuilder.build('/localpage/index/search')
         },
         initObservable: function () {
             this._super();
@@ -19,13 +19,11 @@ define(['uiComponent','jquery','mage/url'], function (Component,$,urlBuilder){
             this.searchText.subscribe(this.handleAutocomplete.bind(this));
 
         },
-
-
         handleAutocomplete: function (searchValue) {
             console.log(searchValue);
-            this.minChars = 2;
+            var chars = this.minChars;
             var url = this.searchUrl;
-            if (searchValue.length > this.minChars) {
+            if (searchValue.length > chars) {
                 var self = $(this);
                 jQuery.ajax({
                     url: url,
@@ -33,21 +31,14 @@ define(['uiComponent','jquery','mage/url'], function (Component,$,urlBuilder){
                     data: {value: searchValue},
                     success: function(data) {
                         console.log(data);
-                    },
+                        this.searchResult(data);
+
+                    }.bind(this),
                     error: function(data) {
                         console.log(data);
                     },
                 });
-                // var filteredSku = this.availableSku.filter (
-                //     function (item) {
-                //         return item.indexOf(searchValue) !== -1;
-                //     }
-                // );
-                // this.searchResult(filteredSku);
             }
-            // else {
-            // this.searchResult([]);
-            // }
         }
     });
 })
