@@ -11,11 +11,7 @@
             "registration.php"
         ],
         "psr-4": {
-
             "Amasty\\ArtemModule\\": ""
-
-            "Amasty\\SecondModule\\": ""
-
         }
 
     }
