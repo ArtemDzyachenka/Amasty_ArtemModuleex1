@@ -31,14 +31,9 @@ class Add extends Action
      * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
      */
     private $collectionFactory;
-    private $_config;
 
 
-    /**
-     * Get product types
-     *
-     * @return array
-     */
+
 
     /**
      * @var \Magento\Framework\Message\ManagerInterface
@@ -51,6 +46,26 @@ class Add extends Action
 
     private $eventManager;
 
+    /**
+     * @var \Amasty\ArtemModule\Model\BlacklistFactory
+     */
+    private $blaclistFactory;
+
+    /**
+     * @var \Amasty\ArtemModule\Model\ResourceModel\Blacklist
+     */
+    private $blaclistResource;
+
+    /**
+     * @var \Amasty\ArtemModule\Model\ResourceModel\Blacklist\CollectionFactory
+     */
+    private $blackCollectionFactory;
+
+    /**
+     * @var \Amasty\ArtemModule\Model\BlackRepository
+     */
+    private $blackRepository;
+
     public function __construct(
         Context                                                        $context,
         ScopeConfigInterface                                           $scopeConfig,
@@ -58,7 +73,12 @@ class Add extends Action
         \Magento\Catalog\Api\ProductRepositoryInterface                $productRepository,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $collectionFactory,
         \Magento\Framework\Message\ManagerInterface                    $messageManager,
-        Manager $eventManager
+        Manager $eventManager,
+        \Amasty\ArtemModule\Model\BlacklistFactory $blacklistFactory,
+        \Amasty\ArtemModule\Model\ResourceModel\Blacklist $blacklistResource,
+        \Amasty\ArtemModule\Model\ResourceModel\Blacklist\CollectionFactory $blackCollectionFactory,
+        \Amasty\ArtemModule\Model\BlackRepository $blackRepository
+
     )
     {
         parent::__construct($context);
@@ -68,12 +88,28 @@ class Add extends Action
         $this->collectionFactory = $collectionFactory;
         $this->messageManager = $messageManager;
         $this->eventManager = $eventManager;
+        $this->blacklistFactory = $blacklistFactory;
+        $this->blacklistResource = $blacklistResource;
+        $this->blackCollectionFactory = $blackCollectionFactory;
+        $this->blackRepository = $blackRepository;
     }
 
     public function execute()
     {
 
+        /**@var \Amasty\ArtemModule\Model\ResourceModel\Blacklist\Collection $blackCollection */
+        $blackCollection = $this->blackCollectionFactory->create();
 
+        $blackCollection->addFieldToFilter('sku_id', ['gteq' => 1]);
+
+        $rep = [];
+        foreach ($blackCollection as $black) {
+            $listSku = $this->blackRepository->getById($black->getsku_id());
+            $rep[] =  [
+                'sku_black'=> $listSku->getsku_blaclist(),
+                'qty_black'=> $black->getqty_blacklist()
+            ];
+        }
 
         $collection = $this->collectionFactory->create();
         $collection->addAttributeToFilter('sku', ['like' => '%']);
@@ -95,34 +131,49 @@ class Add extends Action
         $qty = $params['qty'];
 
         if ($sku) {
-            {
-                $product = $this->productRepository->get($params['sku']);
-                $type = $product->getTypeId();
-                $sku1 = $product->getData('sku');
-                if ($type == 'simple') {
+            $product = $this->productRepository->get($params['sku']);
+            $type = $product->getTypeId();
+            $sku1 = $product->getData('sku');
+            for ($i=0;$i < count($rep);$i++) {
+                if ($type == 'simple' && $params['sku'] != $rep[$i]['sku_black']) {
                     $quote->addProduct($product, $params['qty']);
                     $quote->save();
                     $this->eventManager->dispatch(
                         'cart_event',
                         ['cart_to_check' => $product]
                     );
-                    echo('успех');
+                    echo('успех!');
+                    break;
+                } elseif ($params['sku'] == $rep[0]['sku_black'] && $params['qty'] <= $rep[$i]['qty_black']){
+                    $quote->addProduct($product, $params['qty']);
+                    $quote->save();
+                    $this->eventManager->dispatch(
+                        'cart_event',
+                        ['cart_to_check' => $product]
+                    );
+                    echo('успех вновь!');
+                    break;
+                } elseif ($params['sku'] == $rep[0]['sku_black'] && $params['qty'] > $rep[$i]['qty_black']) {
+                    $finalQty = $params['qty'] - $rep[$i]['qty_black'];
+                    $quote->addProduct($product, $finalQty );
+                    $quote->save();
+                    $this->eventManager->dispatch(
+                        'cart_event',
+                        ['cart_to_check' => $product]
+                    );
+                    $this->messageManager->addErrorMessage("к сожалению, прошла/и только $finalQty продукта");
+                    break;
                 }
+
                 if ($qty < 1) {
                     $this->messageManager->addErrorMessage(__('Надо добавить хотя бы один предмет.'));
                 }
                 if ($type != 'simple') {
                     $this->messageManager->addErrorMessage('Это не simple предмет.');
                 }
-
-//                if ($product != $sku) {
-//                    $this->messageManager->addErrorMessage(('Такого предмета не существует.'));
-//                }
-
                 if ($product != $sku) {
                     $this->messageManager->addErrorMessage(('Такого предмета не существует.'));
-                }
-
+               }
             }
         }
     }

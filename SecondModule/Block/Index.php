@@ -16,10 +16,16 @@ class Index extends ArtemIndex
     \Magento\Checkout\Model\Session $checkoutSession,
     \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
     \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $collectionFactory,
-    \Magento\Customer\Model\Session $session)
+    \Magento\Customer\Model\Session $session
+    )
     {
         $this->_customerSession = $session;
-        parent::__construct($context, $scopeConfig, $checkoutSession, $productRepository, $collectionFactory);
+        parent::__construct($context,
+            $scopeConfig,
+            $checkoutSession,
+            $productRepository,
+            $collectionFactory,
+        );
     }
 
     public function execute()

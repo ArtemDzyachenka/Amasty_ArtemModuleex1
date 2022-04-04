@@ -7,7 +7,7 @@
         <plugin name="Amasty_SecondModule::ChangeAction"
                 type="Amasty\SecondModule\Plugin\ChangeAction"/>
     </type>
-    <type name="Amasty\magento_module-checkout\Controller\Cart\Add">
+    <type name="Magento\Checkout\Controller\Cart\Add">
         <plugin name="Amasty_SecondModule::ChangeStandardModule"
                 type="Amasty\SecondModule\Plugin\ChangeStandardModule"/>
     </type>
