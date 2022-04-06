@@ -4,7 +4,8 @@ define(['uiComponent','jquery','mage/url'], function (Component,$,urlBuilder){
         defaults: {
             searchText: '',
             searchResult: [],
-            searchUrl: urlBuilder.build('/localpage/index/search')
+            searchUrl: urlBuilder.build('localpage/index/search'),
+            minChars: 3
         },
         initObservable: function () {
             this._super();

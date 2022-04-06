@@ -13,15 +13,8 @@ class ChangeStandardModule
      */
     protected $productRepository;
 
-    public function __construct(\Magento\Framework\App\Action\Context $context,
-                                \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-                                \Magento\Checkout\Model\Session $checkoutSession,
-                                \Magento\Store\Model\StoreManagerInterface $storeManager,
-                                \Magento\Framework\Data\Form\FormKey\Validator $formKeyValidator,
-                                CustomerCart $cart,
-                                ProductRepositoryInterface $productRepository)
+    public function __construct(ProductRepositoryInterface $productRepository)
     {
-
         $this->productRepository = $productRepository;
     }
 
@@ -34,9 +27,11 @@ class ChangeStandardModule
     )
     {
         $param = $subject->getRequest()->getParams();
-        $product = $this->productRepository->get($param['sku']);
-        $productId = $product->getId();
-        $subject->getRequest()->setParams(['product' => $productId]);
+        if ($product = $this->productRepository->get($param['sku']))
+        {
+            $productId = $product->getId();
+            $subject->getRequest()->setParams(['product' => $productId]);
+        }
         return null;
     }
 }

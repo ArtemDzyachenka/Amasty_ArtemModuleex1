@@ -3,12 +3,12 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Amasty\ArtemModule\Controller\Index\Index"
                 type="Amasty\SecondModule\Block\Index"/>
-    <type name="Amasty\ArtemModule\Block\Index">
-        <plugin name="Amasty_SecondModule::ChangeAction"
-                type="Amasty\SecondModule\Plugin\ChangeAction"/>
-    </type>
-    <type name="Magento\Checkout\Controller\Cart\Add">
-        <plugin name="Amasty_SecondModule::ChangeStandardModule"
-                type="Amasty\SecondModule\Plugin\ChangeStandardModule"/>
-    </type>
+<!--    <type name="Amasty\ArtemModule\Block\Index">-->
+<!--        <plugin name="Amasty_SecondModule::ChangeAction"-->
+<!--                type="Amasty\SecondModule\Plugin\ChangeAction"/>-->
+<!--    </type>-->
+<!--    <type name="Magento\Checkout\Controller\Cart\Add">-->
+<!--        <plugin name="Amasty_SecondModule::ChangeStandardModule"-->
+<!--                type="Amasty\SecondModule\Plugin\ChangeStandardModule"/>-->
+<!--    </type>-->
 </config>
