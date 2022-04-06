@@ -33,8 +33,6 @@ class Add extends Action
     private $collectionFactory;
 
 
-
-
     /**
      * @var \Magento\Framework\Message\ManagerInterface
      */
@@ -67,17 +65,16 @@ class Add extends Action
     private $blackRepository;
 
     public function __construct(
-        Context                                                        $context,
-        ScopeConfigInterface                                           $scopeConfig,
-        \Magento\Checkout\Model\Session                                $checkoutSession,
-        \Magento\Catalog\Api\ProductRepositoryInterface                $productRepository,
-        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $collectionFactory,
-        \Magento\Framework\Message\ManagerInterface                    $messageManager,
-        Manager $eventManager,
-        \Amasty\ArtemModule\Model\BlacklistFactory $blacklistFactory,
-        \Amasty\ArtemModule\Model\ResourceModel\Blacklist $blacklistResource,
+        Context                                                             $context,
+        ScopeConfigInterface                                                $scopeConfig,
+        \Magento\Checkout\Model\Session                                     $checkoutSession,
+        \Magento\Catalog\Api\ProductRepositoryInterface                     $productRepository,
+        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory      $collectionFactory,
+        \Magento\Framework\Message\ManagerInterface                         $messageManager,
+        Manager                                                             $eventManager,
+        \Amasty\ArtemModule\Model\ResourceModel\Blacklist                   $blacklistResource,
         \Amasty\ArtemModule\Model\ResourceModel\Blacklist\CollectionFactory $blackCollectionFactory,
-        \Amasty\ArtemModule\Model\BlackRepository $blackRepository
+        \Amasty\ArtemModule\Model\BlackRepository                           $blackRepository
 
     )
     {
@@ -88,7 +85,6 @@ class Add extends Action
         $this->collectionFactory = $collectionFactory;
         $this->messageManager = $messageManager;
         $this->eventManager = $eventManager;
-        $this->blacklistFactory = $blacklistFactory;
         $this->blacklistResource = $blacklistResource;
         $this->blackCollectionFactory = $blackCollectionFactory;
         $this->blackRepository = $blackRepository;
@@ -98,44 +94,32 @@ class Add extends Action
     {
 
         /**@var \Amasty\ArtemModule\Model\ResourceModel\Blacklist\Collection $blackCollection */
+
+        $params = $this->getRequest()->getParams();
+
         $blackCollection = $this->blackCollectionFactory->create();
-
-        $blackCollection->addFieldToFilter('sku_id', ['gteq' => 1]);
-
-        $rep = [];
-        foreach ($blackCollection as $black) {
-            $listSku = $this->blackRepository->getById($black->getsku_id());
-            $rep[] =  [
-                'sku_black'=> $listSku->getsku_blaclist(),
-                'qty_black'=> $black->getqty_blacklist()
-            ];
-        }
-
+        $blackCollection->addFieldToFilter('sku_blaclist', ['eq' => $params['sku']]);
         $collection = $this->collectionFactory->create();
         $collection->addAttributeToFilter('sku', ['like' => '%']);
         $collection->addAttributeToFilter('type_id', ['like' => 'Simple Product']);
         $collection->addAttributeToSelect('sku');
 
-
-        $params = $this->getRequest()->getParams();
-        print_r($params);
-
         $quote = $this->checkoutSession->getQuote();
-
         if (!$quote->getId()) {
             $quote->save();
         }
 
-
         $sku = $params['sku'];
         $qty = $params['qty'];
+        $listSku = $blackCollection->getFirstItem();
 
         if ($sku) {
             $product = $this->productRepository->get($params['sku']);
             $type = $product->getTypeId();
             $sku1 = $product->getData('sku');
-            for ($i=0;$i < count($rep);$i++) {
-                if ($type == 'simple' && $params['sku'] != $rep[$i]['sku_black']) {
+            $listSku = $blackCollection->getFirstItem();
+            if ($blackCollection->getSize() === 0) {
+                if ($type == 'simple') {
                     $quote->addProduct($product, $params['qty']);
                     $quote->save();
                     $this->eventManager->dispatch(
@@ -143,8 +127,10 @@ class Add extends Action
                         ['cart_to_check' => $product]
                     );
                     echo('успех!');
-                    break;
-                } elseif ($params['sku'] == $rep[0]['sku_black'] && $params['qty'] <= $rep[$i]['qty_black']){
+                }
+            } elseif ($blackCollection->getSize() > 0) {
+
+                if ($listSku['sku_blaclist'] == $params['sku'] && $listSku['qty_blacklist'] >= $params['qty']) {
                     $quote->addProduct($product, $params['qty']);
                     $quote->save();
                     $this->eventManager->dispatch(
@@ -152,32 +138,33 @@ class Add extends Action
                         ['cart_to_check' => $product]
                     );
                     echo('успех вновь!');
-                    break;
-                } elseif ($params['sku'] == $rep[0]['sku_black'] && $params['qty'] > $rep[$i]['qty_black']) {
-                    $finalQty = $params['qty'] - $rep[$i]['qty_black'];
-                    $quote->addProduct($product, $finalQty );
-                    $quote->save();
-                    $this->eventManager->dispatch(
-                        'cart_event',
-                        ['cart_to_check' => $product]
-                    );
-                    $this->messageManager->addErrorMessage("к сожалению, прошла/и только $finalQty продукта");
-                    break;
+                }else {
+                    if ($listSku['sku_blaclist'] == $params['sku'] && $listSku['qty_blacklist'] < $params['qty']) {
+                        $finalQty = $params['qty'] - $listSku['qty_blacklist'];
+                        $quote->addProduct($product, $finalQty );
+                        $quote->save();
+                        $this->eventManager->dispatch(
+                            'cart_event',
+                            ['cart_to_check' => $product]
+                        );
+                        echo ('wefor');
+                        $this->messageManager->addErrorMessage("к сожалению, прошла/и только $finalQty продукта");
+                    }
                 }
-
-                if ($qty < 1) {
-                    $this->messageManager->addErrorMessage(__('Надо добавить хотя бы один предмет.'));
-                }
-                if ($type != 'simple') {
-                    $this->messageManager->addErrorMessage('Это не simple предмет.');
-                }
-                if ($product != $sku) {
-                    $this->messageManager->addErrorMessage(('Такого предмета не существует.'));
-               }
+            }
+            if ($qty < 1) {
+                $this->messageManager->addErrorMessage(__('Надо добавить хотя бы один предмет.'));
+            }
+            if ($type != 'simple') {
+                $this->messageManager->addErrorMessage('Это не simple предмет.');
+            }
+            if ($product != $sku) {
+                $this->messageManager->addErrorMessage(('Такого предмета не существует.'));
             }
         }
     }
 }
+
 
 
 

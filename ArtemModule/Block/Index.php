@@ -11,7 +11,7 @@ class Index extends Template
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
-    public const FORM_ACTION = 'checkout/cart/add';
+    public const FORM_ACTION = 'checkoutpage/cart/add';
 
     public function __construct(
         Template\Context $context,

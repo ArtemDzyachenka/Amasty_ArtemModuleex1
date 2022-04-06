@@ -10,6 +10,8 @@ use Magento\Framework\Controller\Result\JsonFactory;
 
 class Search extends Action
 {
+    private $resultJsonFactory;
+
     /**
      * Result constructor.
      * @param Context $context
@@ -21,20 +23,17 @@ class Search extends Action
     {
         parent::__construct($context);
         $this->collectionFactory = $collectionFactory;
-        $this->resultJsonFactory = $resultJsonFactory;
     }
 
     public function execute()
     {
-
+        $resultJson =  $this->resultFactory->create(\Magento\Framework\Controller\ResultFactory::TYPE_JSON);
         $getValue = $this->getRequest()->getParam('value');
         $collection = $this->collectionFactory->create();
         $collection->addAttributeToFilter('sku',['like' => '%'.$getValue.'%']);
         $collection->addAttributeToSelect('sku')
                     ->addAttributeToSelect('name');
 
-
-        $resultJson = $this->resultJsonFactory->create();
 
         $result = [];
         foreach ($collection as $product) {
