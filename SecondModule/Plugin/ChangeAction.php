@@ -2,14 +2,14 @@
 
 namespace Amasty\SecondModule\Plugin;
 
-use Magento\Framework\view\Element\Template;
 
-class ChangeAction extends Template
+
+class ChangeAction
 {
     public function aroundGetFormAction(
         \Amasty\ArtemModule\Block\Index $subject
     ) {
-        $this->getUrl('checkout/cart/add') ;
-        return $this;
+        $subject->getUrl('checkout/cart/add');
+        return $subject;
     }
 }
