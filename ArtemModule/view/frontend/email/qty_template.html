@@ -1,0 +1,12 @@
+<!--@subject Amasty ArtemModule qty blacklist is done@-->
+<!--@vars
+{
+    "qty_blacklist":"QtyBlackList"
+}
+@-->
+
+{{template config_path="design/email/header_template"}}
+
+<p>{{trans "Qty in blacklist is %qty_blacklist!" qty_blacklist=$qty_blacklist}}</p>
+
+{{template config_path="design/email/footer_template"}}
