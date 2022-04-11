@@ -37,23 +37,20 @@ class CheckCartAddObserver implements  ObserverInterface
 
         $promoProduct = $this->productRepository->get($promoSku);
         $promoType = $promoProduct->getTypeId();
-        $forSku= $this->scopeConfig->getValue('second_config/all_sku/standart_sku');
 
-        $difSku = array_map('trim', explode(',', $forSku));
-        $cart = $observer->getData('cart_to_check');
-        $whichSku = $cart->getSku();
-        $quote = $this->checkoutSession->getQuote();
-
-        if (!$quote->getId()) {
-            $quote->save();
-        }
-        for ($i=0;$i < count($difSku);$i++)  {
+        if ($promoType == 'simple'){
+            $forSku= $this->scopeConfig->getValue('second_config/all_sku/standart_sku');
+            $difSku = array_map('trim', explode(',', $forSku));
+            $cart = $observer->getData('cart_to_check');
+            $whichSku = $cart->getSku();
+            $quote = $this->checkoutSession->getQuote();
+            if (!$quote->getId()) {
+                $quote->save();
+            }
             if (in_array($whichSku,$difSku)) {
-                if ($promoType == 'simple'){
-                    $quote->addProduct($promoProduct, 1);
-                    $quote->save();
-                    break;
-                }
+                $quote->addProduct($promoProduct, 1);
+                $quote->save();
+
             }
         }
     }
