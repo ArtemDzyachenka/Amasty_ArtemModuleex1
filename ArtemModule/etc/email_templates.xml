@@ -2,8 +2,8 @@
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
     <template
-        id="amasty_artemmodule_qty_template"
-        label="qty notification"
+        id="first_config_message_amasty_artemmodule_qty_template"
+        label="qty_notification"
         file="qty_template.html"
         type="html"
         module="Amasty_ArtemModule"
