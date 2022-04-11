@@ -16,7 +16,13 @@ class Index extends ArtemIndex
     \Magento\Checkout\Model\Session $checkoutSession,
     \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
     \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $collectionFactory,
-    \Magento\Customer\Model\Session $session
+    \Magento\Customer\Model\Session $session,
+    \Magento\Framework\Mail\Template\TransportBuilder $transportBuilder,
+    \Magento\Framework\Mail\Template\Factory $templateFactory,
+    \Amasty\ArtemModule\Model\ResourceModel\Blacklist                   $blacklistResource,
+    \Amasty\ArtemModule\Model\ResourceModel\Blacklist\CollectionFactory $blackCollectionFactory,
+    \Amasty\ArtemModule\Model\BlacklistFactory $blaclistFactory
+
     )
     {
         $this->_customerSession = $session;
@@ -25,6 +31,11 @@ class Index extends ArtemIndex
             $checkoutSession,
             $productRepository,
             $collectionFactory,
+            $transportBuilder,
+            $templateFactory,
+            $blacklistResource,
+            $blackCollectionFactory,
+            $blaclistFactory
         );
     }
 
@@ -33,8 +44,7 @@ class Index extends ArtemIndex
         if ($this->_customerSession->isLoggedIn()) {
             return parent::execute();
         } else {
-            return parent::execute();
-//            die ('Зарегестрируйтесь на сайте!');
+            die ('Зарегестрируйтесь на сайте!');
         }
     }
 

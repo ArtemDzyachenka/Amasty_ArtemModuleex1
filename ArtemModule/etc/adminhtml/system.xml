@@ -34,6 +34,18 @@
                     <validate>validate-number</validate>
                 </field>
             </group>
+            <group id="message" translate="label" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Message delivery</label>
+                <field id="email_to_deliver" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Почта получателя</label>
+                    <validate>validate-emails</validate>
+                </field>
+                <field id="email_template_choice"  type="select"  showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Темплейт</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                    <validate>validate-number</validate>
+                </field>
+            </group>
         </section>
     </system>
 </config>

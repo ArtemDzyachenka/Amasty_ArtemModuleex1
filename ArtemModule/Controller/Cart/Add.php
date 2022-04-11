@@ -64,6 +64,10 @@ class Add extends Action
      */
     private $blackRepository;
 
+    private $transportBuilder;
+
+    private $templateFactory;
+
     public function __construct(
         Context                                                             $context,
         ScopeConfigInterface                                                $scopeConfig,
@@ -74,8 +78,9 @@ class Add extends Action
         Manager                                                             $eventManager,
         \Amasty\ArtemModule\Model\ResourceModel\Blacklist                   $blacklistResource,
         \Amasty\ArtemModule\Model\ResourceModel\Blacklist\CollectionFactory $blackCollectionFactory,
-        \Amasty\ArtemModule\Model\BlackRepository                           $blackRepository
-
+        \Amasty\ArtemModule\Model\BlackRepository                           $blackRepository,
+        \Magento\Framework\Mail\Template\TransportBuilder $transportBuilder,
+        \Magento\Framework\Mail\Template\Factory $templateFactory
     )
     {
         parent::__construct($context);
@@ -88,6 +93,8 @@ class Add extends Action
         $this->blacklistResource = $blacklistResource;
         $this->blackCollectionFactory = $blackCollectionFactory;
         $this->blackRepository = $blackRepository;
+        $this->transportBuilder = $transportBuilder;
+        $this->templateFactory = $templateFactory;
     }
 
     public function execute()
@@ -99,10 +106,6 @@ class Add extends Action
 
         $blackCollection = $this->blackCollectionFactory->create();
         $blackCollection->addFieldToFilter('sku_blaclist', ['eq' => $params['sku']]);
-        $collection = $this->collectionFactory->create();
-        $collection->addAttributeToFilter('sku', ['like' => '%']);
-        $collection->addAttributeToFilter('type_id', ['like' => 'Simple Product']);
-        $collection->addAttributeToSelect('sku');
 
         $quote = $this->checkoutSession->getQuote();
         if (!$quote->getId()) {
@@ -117,9 +120,14 @@ class Add extends Action
             $product = $this->productRepository->get($params['sku']);
             $type = $product->getTypeId();
             $sku1 = $product->getData('sku');
-            $listSku = $blackCollection->getFirstItem();
             if ($blackCollection->getSize() === 0) {
                 if ($type == 'simple') {
+                    if ($qty < 1) {
+                        $this->messageManager->addErrorMessage(__('Надо добавить хотя бы один предмет.'));
+                    }
+                    if ($product != $sku) {
+                        $this->messageManager->addErrorMessage(('Такого предмета не существует.'));
+                    }
                     $quote->addProduct($product, $params['qty']);
                     $quote->save();
                     $this->eventManager->dispatch(
@@ -127,10 +135,21 @@ class Add extends Action
                         ['cart_to_check' => $product]
                     );
                     echo('успех!');
+                } else {
+                    $this->messageManager->addErrorMessage('Это не simple предмет.');
                 }
-            } elseif ($blackCollection->getSize() > 0) {
-
-                if ($listSku['sku_blaclist'] == $params['sku'] && $listSku['qty_blacklist'] >= $params['qty']) {
+            } else {
+                $listSku = $blackCollection->getFirstItem();
+                if ($listSku->getSkuBlaclist() == $params['sku'] && $listSku->getQtyBlacklist() >= $params['qty']) {
+                    if ($qty < 1) {
+                        $this->messageManager->addErrorMessage(__('Надо добавить хотя бы один предмет.'));
+                    }
+                    if ($type != 'simple') {
+                        $this->messageManager->addErrorMessage('Это не simple предмет.');
+                    }
+                    if ($product != $sku) {
+                        $this->messageManager->addErrorMessage(('Такого предмета не существует.'));
+                    }
                     $quote->addProduct($product, $params['qty']);
                     $quote->save();
                     $this->eventManager->dispatch(
@@ -138,9 +157,19 @@ class Add extends Action
                         ['cart_to_check' => $product]
                     );
                     echo('успех вновь!');
-                }else {
-                    if ($listSku['sku_blaclist'] == $params['sku'] && $listSku['qty_blacklist'] < $params['qty']) {
-                        $finalQty = $params['qty'] - $listSku['qty_blacklist'];
+                } else {
+                    if ($listSku->getSkuBlaclist() == $params['sku'] && $listSku->getQtyBlacklist() < $params['qty']) {
+                        if ($qty < 1) {
+                            $this->messageManager->addErrorMessage(__('Надо добавить хотя бы один предмет.'));
+                        }
+                        if ($type != 'simple') {
+                            $this->messageManager->addErrorMessage('Это не simple предмет.');
+                        }
+                        if ($product != $sku) {
+                            $this->messageManager->addErrorMessage(('Такого предмета не существует.'));
+                        }
+                        $item = $quote->getItemsQty();
+                        $finalQty = $listSku->getQtyBlacklist() - $item;
                         $quote->addProduct($product, $finalQty );
                         $quote->save();
                         $this->eventManager->dispatch(
@@ -151,15 +180,6 @@ class Add extends Action
                         $this->messageManager->addErrorMessage("к сожалению, прошла/и только $finalQty продукта");
                     }
                 }
-            }
-            if ($qty < 1) {
-                $this->messageManager->addErrorMessage(__('Надо добавить хотя бы один предмет.'));
-            }
-            if ($type != 'simple') {
-                $this->messageManager->addErrorMessage('Это не simple предмет.');
-            }
-            if ($product != $sku) {
-                $this->messageManager->addErrorMessage(('Такого предмета не существует.'));
             }
         }
     }

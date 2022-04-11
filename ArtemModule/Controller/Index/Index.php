@@ -33,17 +33,24 @@ class Index extends Action
      */
     private $blackCollectionFactory;
 
-    /**
-     * @var \Amasty\ArtemModule\Model\BlackRepository
-     */
-    private $blackRepository;
+
+
+    private $transportBuilder;
+
+    private $templateFactory;
 
     public function __construct (
         Context $context,
         ScopeConfigInterface $scopeConfig,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
-        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $collectionFactory
+        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $collectionFactory,
+        \Magento\Framework\Mail\Template\TransportBuilder $transportBuilder,
+        \Magento\Framework\Mail\Template\Factory $templateFactory,
+        \Amasty\ArtemModule\Model\ResourceModel\Blacklist                   $blacklistResource,
+        \Amasty\ArtemModule\Model\ResourceModel\Blacklist\CollectionFactory $blackCollectionFactory,
+        \Amasty\ArtemModule\Model\BlacklistFactory $blaclistFactory
+
     )
     {
         parent::__construct($context);
@@ -51,6 +58,12 @@ class Index extends Action
         $this->checkoutSession = $checkoutSession;
         $this->productRepository =  $productRepository;
         $this->collectionFactory = $collectionFactory;
+        $this->blaclistFactory = $blaclistFactory;
+        $this->blacklistResource = $blacklistResource;
+        $this->blackCollectionFactory = $blackCollectionFactory;
+        $this->transportBuilder = $transportBuilder;
+        $this->templateFactory = $templateFactory;
+
     }
 
     public function execute()
