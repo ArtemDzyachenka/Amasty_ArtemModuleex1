@@ -44,7 +44,8 @@ class Index extends ArtemIndex
         if ($this->_customerSession->isLoggedIn()) {
             return parent::execute();
         } else {
-            die ('Зарегестрируйтесь на сайте!');
+            return parent::execute();
+//            die ('Зарегестрируйтесь на сайте!');
         }
     }
 

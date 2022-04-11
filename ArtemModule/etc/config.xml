@@ -9,6 +9,9 @@
             <more>
                 <qty_enabled>1</qty_enabled>
             </more>
+            <message>
+                <email_template_choice>first_config_message_amasty_artemmodule_qty_template</email_template_choice>
+            </message>
         </first_config>
     </default>
 </config>
