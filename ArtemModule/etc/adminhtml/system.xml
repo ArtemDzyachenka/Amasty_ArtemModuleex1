@@ -43,7 +43,6 @@
                 <field id="amasty_artemmodule_qty_template"  type="select"  showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Темплейт</label>
                     <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
-<!--                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>-->
                 </field>
             </group>
         </section>

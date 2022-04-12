@@ -17,18 +17,16 @@ class AmMessage
 //     */
 //    private $templateFactory;
 
-    private $logger;
+
 
     public function __construct(
         \Amasty\ArtemModule\Model\BlacklistFactory $blaclistFactory,
         \Amasty\ArtemModule\Model\ResourceModel\Blacklist $blacklistResource,
-        \Magento\Framework\Mail\Template\Factory $templateFactory,
-        \Psr\Log\LoggerInterface $logger
+        \Magento\Framework\Mail\Template\Factory $templateFactory
     ){
         $this->blaclistFactory = $blaclistFactory;
         $this->blacklistResource = $blacklistResource;
         $this->templateFactory = $templateFactory;
-        $this->logger = $logger;
     }
     public function execute()
     {
